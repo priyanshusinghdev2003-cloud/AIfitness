@@ -7,17 +7,19 @@ import Onboarding from "./pages/Onboarding";
 import SignIn from "./pages/SignIn";
 import Layout from "./pages/Layout";
 import { useAppContext } from "./context/AppContext";
-import { Toaster } from "sonner";
+import Loading from "./components/Loading";
 
 const App = () => {
-  const { user, isUserFetched } = useAppContext();
+  const { user, isUserFetched, onboardingCompleted } = useAppContext();
   if (!user) {
-    return isUserFetched ? <SignIn /> : <p>Loading</p>;
+    return isUserFetched ? <SignIn /> : <Loading />;
+  }
+  if (!onboardingCompleted) {
+    return <Onboarding />;
   }
 
   return (
     <>
-      <Toaster position="bottom-right" />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />

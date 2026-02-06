@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { useLocation } from "react-router-dom";
+import SoftBackdrop from "@/components/SoftBackdrop";
 
 function Layout() {
   const { theme } = useTheme();
@@ -38,6 +39,7 @@ function Layout() {
   ];
   return (
     <div className={theme === "dark" ? "dark" : ""}>
+      <SoftBackdrop />
       <SidebarProvider>
         <NavBar />
         <SidebarInset>

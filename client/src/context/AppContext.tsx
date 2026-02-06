@@ -22,7 +22,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [allActivityLogs, setAllActivityLogs] = useState<ActivityEntry[]>([]);
 
   const signup = async (credentials: Credentials) => {
-    console.log(credentials);
     const { data } = await mockApi.auth.register(credentials);
     setUser(data.user);
     if (data?.user.age && data?.user?.weight && data?.user?.goal) {
@@ -31,7 +30,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("token", data.jwt);
   };
   const login = async (credentials: Credentials) => {
-    console.log(credentials);
     const { data } = await mockApi.auth.login(credentials);
     setUser({ ...data.user, token: data.jwt });
     if (data?.user.age && data?.user?.weight && data?.user?.goal) {

@@ -58,7 +58,7 @@ const menuItems = [
 const NavBar = () => {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
-  const { user } = useAppContext();
+  const { user, logout } = useAppContext();
 
   return (
     <Sidebar collapsible="icon">
@@ -135,7 +135,7 @@ const NavBar = () => {
                   <Settings className="mr-2 size-4" />
                   Account Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={logout}>
                   <LogOut className="mr-2 size-4" />
                   Sign out
                 </DropdownMenuItem>

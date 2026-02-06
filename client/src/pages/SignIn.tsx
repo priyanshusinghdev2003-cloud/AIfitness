@@ -25,10 +25,7 @@ function SignIn() {
 
   const navigate = useNavigate();
 
-  const handleAuthSubmission = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("clicked");
-
+  const handleAuthSubmission = async () => {
     if (state == "login") {
       if (!email || !password) {
         return toast.error("Please fill all the fields");
@@ -46,7 +43,6 @@ function SignIn() {
         toast.success("Login successful");
         navigate("/");
       } else {
-        console.log("clicked");
         signup({ username, email, password });
         toast.success("Signup successful");
         navigate("/");
@@ -139,6 +135,7 @@ function SignIn() {
             type="submit"
             className="w-full"
             onClick={handleAuthSubmission}
+            disabled={isSubmitting}
           >
             {state === "login" ? "Login" : "Sign Up"}
           </Button>
