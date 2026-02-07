@@ -4,7 +4,7 @@ const Dashboard = () => {
   const { user } = useAppContext();
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="header relative h-72 w-full bg-linear-to-l from-card to-transparent z-1 shadow-md shadow-card-foreground/70 rounded-md flex flex-col justify-center px-4">
+      <div className="header relative h-72 w-full bg-linear-to-l from-card to-transparent z-1 shadow-sm shadow-black/20 rounded-md flex flex-col justify-center px-4">
         <h1 className=" font-bold text-sm text-muted-foreground">
           Welcome back,
         </h1>

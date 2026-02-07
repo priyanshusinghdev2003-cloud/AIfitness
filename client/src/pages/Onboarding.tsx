@@ -1,33 +1,29 @@
 import { ageRanges, goalOptions } from "@/assets/assets";
 import mockApi from "@/assets/mockApi";
-import ProgressBar from "@/assets/ui/ProgressBar";
+
 import Slider from "@/assets/ui/Slider";
 import SoftBackdrop from "@/components/SoftBackdrop";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
 import { useAppContext } from "@/context/AppContext";
 import { type ProfileFormData, type UserData } from "@/types";
 import {
   ArrowLeft,
   ArrowRight,
-  InfoIcon,
   PersonStanding,
   ScaleIcon,
   Target,
   User,
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 function Onboarding() {
-  const [step, setStep] = useState<number>(3);
+  const [step, setStep] = useState<number>(1);
   const { user, setOnboardingCompleted, fetchUser } = useAppContext();
   const [formData, setFormData] = useState<ProfileFormData>({
     age: 0,
@@ -37,6 +33,7 @@ function Onboarding() {
     dailyCalorieBurn: 2000,
     dailyCalorieIntake: 400,
   });
+  const navigate = useNavigate();
   const totalSteps = 3;
   const updateField = (
     field: keyof ProfileFormData,
@@ -51,7 +48,7 @@ function Onboarding() {
         Number(formData.age) < 13 ||
         Number(formData.age) > 120
       ) {
-        return toast.error("Age sis required");
+        return toast.error("Age is required");
       }
     }
     if (step < totalSteps) {
@@ -72,6 +69,7 @@ function Onboarding() {
       toast.success("Profile updated successfully");
       setOnboardingCompleted(true);
       fetchUser(user?.token || "");
+      navigate("/");
     }
   };
   return (
