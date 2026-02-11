@@ -9,10 +9,21 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useLocation } from "react-router-dom";
 import SoftBackdrop from "@/components/SoftBackdrop";
+import { useAppContext } from "@/context/AppContext";
+import type { FoodEntry } from "@/types";
 
 function Layout() {
   const { theme } = useTheme();
+  const { allFoodLogs } = useAppContext();
   const location = useLocation();
+  const today = new Date().toISOString().split("T")[0];
+  const todayEntries = allFoodLogs.filter(
+    (entry: FoodEntry) => entry.createdAt?.split("T")[0] === today,
+  );
+  const totalCalories = todayEntries.reduce(
+    (acc, entry) => acc + entry.calories,
+    0,
+  );
 
   let headerTitle = [
     {
@@ -24,6 +35,7 @@ function Layout() {
       subtitle: "Track your daily intake",
       url: "/food",
       rightContent: "Today's Total",
+      rightContentValue: `${totalCalories}kcal`,
     },
     {
       title: "Activity Log",
@@ -60,11 +72,17 @@ function Layout() {
                 }
               </p>
             </div>
-            <div className="flex items-center justify-end w-[20%]">
+            <div className="flex items-center justify-end w-[20%] flex-col">
               <p className="text-sm text-muted-foreground">
                 {
                   headerTitle.find((item) => item.url === location.pathname)
                     ?.rightContent
+                }
+              </p>
+              <p className="text-sm font-semibold text-emerald-500">
+                {
+                  headerTitle.find((item) => item.url === location.pathname)
+                    ?.rightContentValue
                 }
               </p>
             </div>

@@ -1,6 +1,7 @@
 import { getMotivationalMessage } from "@/assets/assets";
 import Card from "@/assets/ui/Card";
 import ProgressBar from "@/assets/ui/ProgressBar";
+import CaloriesChart from "@/components/CaloriesChart";
 import { useAppContext } from "@/context/AppContext";
 import type { ActivityEntry, FoodEntry } from "@/types";
 import {
@@ -281,6 +282,44 @@ const Dashboard = () => {
             </div>
           </Card>
         )}
+        {/* Quick Summary */}
+        <Card>
+          <h3 className="font-semibold text-slate-800 dark:text-white mb-4">
+            Today Summary
+          </h3>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800">
+              <span className="text-slate-500 dark:text-slate-400">
+                Meals Logged
+              </span>
+              <span className="font-medium text-slate-700 dark:text-slate-200">
+                {todayFoodLog.length}
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800">
+              <span className="text-slate-500 dark:text-slate-400">
+                Total Calories
+              </span>
+              <span className="font-medium text-slate-700 dark:text-slate-200">
+                {totalCalories} kcal
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-2 ">
+              <span className="text-slate-500 dark:text-slate-400">
+                Active time
+              </span>
+              <span className="font-medium text-slate-700 dark:text-slate-200">
+                {totalActiveMinutes} min
+              </span>
+            </div>
+          </div>
+        </Card>
+        <Card className="col-span-2">
+          <h3 className="font-semibold text-slate-800 dark:text-white mb-4">
+            This Week's Progress
+          </h3>
+          <CaloriesChart />
+        </Card>
       </div>
     </div>
   );
