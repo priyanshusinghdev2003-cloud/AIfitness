@@ -10,18 +10,25 @@ import { Separator } from "@/components/ui/separator";
 import { useLocation } from "react-router-dom";
 import SoftBackdrop from "@/components/SoftBackdrop";
 import { useAppContext } from "@/context/AppContext";
-import type { FoodEntry } from "@/types";
+import type { ActivityEntry, FoodEntry } from "@/types";
 
 function Layout() {
   const { theme } = useTheme();
-  const { allFoodLogs } = useAppContext();
+  const { allFoodLogs, allActivityLogs } = useAppContext();
   const location = useLocation();
   const today = new Date().toISOString().split("T")[0];
   const todayEntries = allFoodLogs.filter(
     (entry: FoodEntry) => entry.createdAt?.split("T")[0] === today,
   );
+  const todayActivities = allActivityLogs.filter(
+    (activity: ActivityEntry) => activity.createdAt?.split("T")[0] === today,
+  );
   const totalCalories = todayEntries.reduce(
     (acc, entry) => acc + entry.calories,
+    0,
+  );
+  const totalMinutes: number = todayActivities.reduce(
+    (total, activity) => total + activity.duration,
     0,
   );
 
@@ -42,6 +49,7 @@ function Layout() {
       subtitle: "Track your activity",
       url: "/activity",
       rightContent: "Active Today",
+      rightContentValue: `${totalMinutes} min`,
     },
     {
       title: "Profile",
@@ -79,7 +87,9 @@ function Layout() {
                     ?.rightContent
                 }
               </p>
-              <p className="text-sm font-semibold text-emerald-500">
+              <p
+                className={`text-sm font-semibold ${headerTitle.find((item) => item.url === location.pathname)?.title === "Activity Log" ? "text-blue-600" : "text-emerald-500"}`}
+              >
                 {
                   headerTitle.find((item) => item.url === location.pathname)
                     ?.rightContentValue

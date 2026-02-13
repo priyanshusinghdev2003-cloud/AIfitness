@@ -62,6 +62,13 @@ function FoodLog() {
     setFormData({ ...formData, mealType: name });
     setShowForm(true);
   };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // implement image analysis
+  };
+
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     const { data } = await mockApi.foodLogs.create({ data: formData });
@@ -114,7 +121,13 @@ function FoodLog() {
             >
               <SparkleIcon className="size-5" /> AI Food Snap
             </Button>
-            <input type="file" accept="image/*" hidden ref={inputRef} />
+            <input
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={handleImageChange}
+              ref={inputRef}
+            />
             {loading && (
               <div className="fixed inset-0 backdrop-blur flex items-center justify-center z-100">
                 <Loader2Icon className="size-8 text-emerald-600 dark:text-emerald-400 animate-spin" />
