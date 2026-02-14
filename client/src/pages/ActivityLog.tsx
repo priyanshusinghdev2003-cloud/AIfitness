@@ -5,7 +5,13 @@ import Card from "@/assets/ui/Card";
 import Input from "@/assets/ui/Input";
 import { useAppContext } from "@/context/AppContext";
 import type { ActivityEntry } from "@/types";
-import { PlusIcon } from "lucide-react";
+import {
+  ActivityIcon,
+  DumbbellIcon,
+  PlusIcon,
+  TimerIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -54,6 +60,10 @@ const ActivityLog = () => {
     }
     setFormData({ ...formData, duration, calories });
   };
+  const totalMinutes: number = activites.reduce(
+    (total, activity) => total + activity.duration,
+    0,
+  );
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (
@@ -74,6 +84,17 @@ const ActivityLog = () => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
+      toast.error("Something went wrong");
+    }
+  };
+  const handleDelete = async (id: string) => {
+    try {
+      await mockApi.activityLogs.delete(id);
+      setAllActivityLogs((prev) =>
+        prev.filter((activity) => String(activity.id) !== String(id)),
+      );
+      toast.success("Activity deleted successfully");
+    } catch (error) {
       toast.error("Something went wrong");
     }
   };
@@ -163,6 +184,86 @@ const ActivityLog = () => {
       )}
 
       {/* Activity List Section */}
+      {activites.length === 0 ? (
+        <Card className="text-center py-12">
+          <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
+            <DumbbellIcon className="w-8 h-8 text-slate-400 dark:text-slate-500" />
+          </div>
+          <h3 className="font-semibold text-slate-700 dark:text-slate-200 mb-2">
+            No activites logged today
+          </h3>
+          <p className="text-sm ttext-slate-500 dark:text-slate-400 ">
+            Start moving and track your progress
+          </p>
+        </Card>
+      ) : (
+        <Card>
+          <div className="flex items-center  mb-4 gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+              <ActivityIcon className="size-5 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-800 dark:text-white">
+                Today's Activities
+              </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {activites.length} logged
+              </p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {activites.map((activity) => (
+              <div key={activity.id} className="activity-entry-item">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                    <TimerIcon className="size-5 text-blue-500 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-slate-700 dark:text-slate-200">
+                      {activity.name}
+                    </p>
+                    <p className="text-sm text-slate-400 dark:text-slate-400">
+                      {new Date(activity?.createdAt || "").toLocaleTimeString(
+                        [],
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        },
+                      )}{" "}
+                      - {activity.duration} min
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <p className="font-semibold text-slate-700 dark:text-slate-200">
+                      {activity.duration} min
+                    </p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      {activity.calories} kcal
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleDelete(activity.documentId)}
+                    className="p-2 text-red-400 cursor-pointer hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                  >
+                    <Trash2Icon className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* total summary */}
+          <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+            <span className="text-slate-500 dar:text-slate-400">
+              Total Active Time
+            </span>
+            <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+              {totalMinutes} min
+            </span>
+          </div>
+        </Card>
+      )}
     </div>
   );
 };
