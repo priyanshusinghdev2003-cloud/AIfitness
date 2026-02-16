@@ -123,7 +123,11 @@ const ActivityLog = () => {
               ))}
             </div>
           </Card>
-          <Button className="w-full" onClick={() => setShowForm(true)}>
+          <Button
+            className="w-full"
+            onClick={() => setShowForm(true)}
+            disabled={loading}
+          >
             <PlusIcon className="size-5" /> Add Custom Activity
           </Button>
         </div>

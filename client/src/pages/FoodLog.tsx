@@ -267,7 +267,6 @@ function FoodLog() {
                 (total, entry) => total + entry.calories,
                 0,
               );
-              const mealEntries = groupedEntries[mealTypeKey];
 
               return (
                 <Card key={mealType}>

@@ -255,7 +255,7 @@ const Dashboard = () => {
                           };
                         return { color: "text-red-500", bg: "bg-red-500" };
                       };
-                      const { color, bg } = getStatus(Number(bmi));
+                      const { color } = getStatus(Number(bmi));
                       return (
                         <span
                           className={`px-2 py-1 rounded-full text-lg font-bold ${color} `}
