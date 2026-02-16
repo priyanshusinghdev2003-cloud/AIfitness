@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import api from "@/config/api";
 
 import { useAppContext } from "@/context/AppContext";
-import { type ProfileFormData, type UserData } from "@/types";
+import { type ProfileFormData } from "@/types";
 import {
   ArrowLeft,
   ArrowRight,
