@@ -4,11 +4,11 @@ import {
   mealTypeOptions,
   quickActivitiesFoodLog,
 } from "@/assets/assets";
-import mockApi from "@/assets/mockApi";
 import Button from "@/assets/ui/Button";
 import Card from "@/assets/ui/Card";
 import Input from "@/assets/ui/Input";
 import Select from "@/assets/ui/Select";
+import api from "@/config/api";
 import { useAppContext } from "@/context/AppContext";
 import type { FoodEntry, FormData } from "@/types";
 import {
@@ -65,16 +65,68 @@ function FoodLog() {
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
     if (!file) return;
     // implement image analysis
+    try {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const { data } = await api.post("/api/image-analysis", formData);
+      const result = data.result;
+      let mealType = "";
+      const hour = new Date().getHours();
+      if (hour >= 0 && hour < 12) {
+        mealType = "breakfast";
+      } else if (hour >= 12 && hour < 16) {
+        mealType = "lunch";
+      } else if (hour >= 16 && hour < 18) {
+        mealType = "snack";
+      } else {
+        mealType = "dinner";
+      }
+      if (!mealType || !result.name || !result.calories) {
+        toast.error("Failed to analyze food");
+        return;
+      }
+      const { data: newEntry } = await api.post("/api/food-logs", {
+        data: { name: result.name, calories: result.calories, mealType },
+      });
+      setEntries((prev) => [...prev, newEntry]);
+      setAllFoodLogs((prev) => [...prev, newEntry]);
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to add entry");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    const { data } = await mockApi.foodLogs.create({ data: formData });
-    setAllFoodLogs((prev) => [...prev, data]);
-    setFormData({ name: "", calories: 0, mealType: "" });
-    setShowForm(false);
+    if (
+      !formData.name.trim() ||
+      !formData.calories ||
+      formData.calories <= 0 ||
+      !formData.mealType
+    ) {
+      toast.error("Please Enter Valid Food Details");
+      return;
+    }
+    try {
+      setLoading(true);
+      const { data } = await api.post("/api/food-logs", { data: formData });
+      setAllFoodLogs((prev) => [...prev, data]);
+      setFormData({ name: "", calories: 0, mealType: "" });
+      setShowForm(false);
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to add entry");
+    } finally {
+      setLoading(false);
+    }
   };
   const handleDelete = async (id: string) => {
     try {
@@ -82,8 +134,9 @@ function FoodLog() {
         "Are you sure you want to delete this entry?",
       );
       if (!confirm) return;
-      await mockApi.foodLogs.delete(id);
+      await api.delete(`/api/food-logs/${id}`);
       setAllFoodLogs((prev) => prev.filter((entry) => entry.documentId !== id));
+      setEntries((prev) => prev.filter((entry) => entry.documentId !== id));
     } catch (error: any) {
       console.log(error);
       toast.error(error?.message || "Failed to delete entry");
@@ -215,6 +268,7 @@ function FoodLog() {
                 0,
               );
               const mealEntries = groupedEntries[mealTypeKey];
+
               return (
                 <Card key={mealType}>
                   <div className="flex items-center justify-between mb-4">

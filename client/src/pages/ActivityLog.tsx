@@ -1,8 +1,8 @@
 import { quickActivities } from "@/assets/assets";
-import mockApi from "@/assets/mockApi";
 import Button from "@/assets/ui/Button";
 import Card from "@/assets/ui/Card";
 import Input from "@/assets/ui/Input";
+import api from "@/config/api";
 import { useAppContext } from "@/context/AppContext";
 import type { ActivityEntry } from "@/types";
 import {
@@ -76,26 +76,30 @@ const ActivityLog = () => {
     }
     setLoading(true);
     try {
-      const { data } = await mockApi.activityLogs.create({ data: formData });
+      const { data } = await api.post("/api/activity-logs", { data: formData });
       setAllActivityLogs((prev) => [...prev, data]);
       setShowForm(false);
       setError("");
       setFormData({ name: "", duration: 0, calories: 0 });
       setLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       setLoading(false);
-      toast.error("Something went wrong");
+      toast.error(error?.response?.data?.message || "Something went wrong");
     }
   };
   const handleDelete = async (id: string) => {
     try {
-      await mockApi.activityLogs.delete(id);
+      const confirm = window.confirm(
+        "Are you sure you want to delete this activity?",
+      );
+      if (!confirm) return;
+      await api.delete(`/api/activity-logs/${id}`);
       setAllActivityLogs((prev) =>
         prev.filter((activity) => String(activity.id) !== String(id)),
       );
       toast.success("Activity deleted successfully");
-    } catch (error) {
-      toast.error("Something went wrong");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
     }
   };
   return (

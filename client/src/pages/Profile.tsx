@@ -1,12 +1,12 @@
 import { goalLabels, goalOptions } from "@/assets/assets";
-import mockApi from "@/assets/mockApi";
 import Button from "@/assets/ui/Button";
 import Card from "@/assets/ui/Card";
 import Input from "@/assets/ui/Input";
 import Select from "@/assets/ui/Select";
+import api from "@/config/api";
 import { useAppContext } from "@/context/AppContext";
 import { useTheme } from "@/context/ThemeContext";
-import type { ProfileFormData, UserData } from "@/types";
+import type { ProfileFormData } from "@/types";
 import {
   CalendarIcon,
   LogOutIcon,
@@ -46,15 +46,11 @@ function Profile() {
   };
   const handleSave = async () => {
     try {
-      const updates: Partial<UserData> = {
-        ...formData,
-        goal: formData.goal as "lose" | "maintain" | "gain",
-      };
-      await mockApi.user.update(user?.id || "", updates);
+      await api.put(`/api/users/${user?.id}`, formData);
       await fetchUser(user?.token || "");
       toast.success("Profile updated successfully");
     } catch (error: any) {
-      toast.error(error.message || "Failed to update profile");
+      toast.error(error?.response?.data?.message || "Failed to update profile");
     } finally {
       setIsEditing(false);
     }

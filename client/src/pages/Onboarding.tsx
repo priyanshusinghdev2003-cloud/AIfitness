@@ -1,12 +1,11 @@
 import { ageRanges, goalOptions } from "@/assets/assets";
-import mockApi from "@/assets/mockApi";
-
 import Slider from "@/assets/ui/Slider";
 import SoftBackdrop from "@/components/SoftBackdrop";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import api from "@/config/api";
 
 import { useAppContext } from "@/context/AppContext";
 import { type ProfileFormData, type UserData } from "@/types";
@@ -62,14 +61,15 @@ function Onboarding() {
         createdAt: new Date().toISOString(),
       };
       localStorage.setItem("fitnessUser", JSON.stringify(userData));
-      await mockApi.user.update(
-        user?.id || "",
-        userData as unknown as Partial<UserData>,
-      );
-      toast.success("Profile updated successfully");
-      setOnboardingCompleted(true);
-      fetchUser(user?.token || "");
-      navigate("/");
+      try {
+        await api.put(`/api/users/${user?.id}`, userData);
+        toast.success("Profile updated successfully");
+        setOnboardingCompleted(true);
+        fetchUser(user?.token || "");
+        navigate("/");
+      } catch (error: any) {
+        toast.error(error.response.data.message || "Something went wrong");
+      }
     }
   };
   return (
